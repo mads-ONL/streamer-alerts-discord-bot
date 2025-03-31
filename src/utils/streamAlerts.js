@@ -9,6 +9,7 @@ const { checkKickLive } = require("./kick");
 // const { checkTikTokLive } = require("./tiktok");
 
 const lastLiveData = new Map();
+const streamMessages = new Map(); // Store message IDs for each streamer
 
 module.exports = {
   init: (client) => {
@@ -32,23 +33,42 @@ async function checkStreamers(client) {
           liveInfo.isLive &&
           (!lastLive || lastLive.title !== liveInfo.streamer.title);
 
-          if (shouldSendEmbed) {
-            const channel = client.channels.cache.get(streamers[i].channelID);
-            if (channel) {
-              const { embed, components } = createStreamerEmbed(liveInfo.streamer);
-              await channel.send({ content: "@here", embeds: [embed], components });
-            }
-
-          lastLiveData.set(liveStreamKey, {
-            title: liveInfo.streamer.title,
-            imageUrl: liveInfo.streamer.imageUrl,
-            isLive: liveInfo.isLive,
-          });
+        if (shouldSendEmbed) {
+          const channel = client.channels.cache.get(streamers[i].channelID);
+          if (channel) {
+            const { embed, components } = createStreamerEmbed(liveInfo.streamer);
+            const message = await channel.send({ embeds: [embed], components });
+            
+            // Store the message ID for this streamer
+            streamMessages.set(liveStreamKey, message.id);
+          }
         }
 
+        // Check if stream went offline
         if (!liveInfo.isLive && lastLiveData.has(liveStreamKey)) {
+          const messageId = streamMessages.get(liveStreamKey);
+          if (messageId) {
+            try {
+              const channel = client.channels.cache.get(streamers[i].channelID);
+              if (channel) {
+                const message = await channel.messages.fetch(messageId);
+                if (message) {
+                  await message.delete();
+                }
+              }
+            } catch (error) {
+              console.error(`Error deleting message for ${streamers[i].name}:`, error);
+            }
+            streamMessages.delete(liveStreamKey);
+          }
           lastLiveData.delete(liveStreamKey);
         }
+
+        lastLiveData.set(liveStreamKey, {
+          title: liveInfo.streamer.title,
+          imageUrl: liveInfo.streamer.imageUrl,
+          isLive: liveInfo.isLive,
+        });
 
         streamers[i] = {
           ...streamers[i],
