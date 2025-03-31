@@ -8,7 +8,7 @@ module.exports = class RemoveStreamerCommand extends Command {
     super(context, {
       ...options,
       name: "removestreamer",
-      description: "Remove a streamer from tracking.",
+      description: "Fjern en streameren fra tracking.",
     });
   }
 
@@ -20,7 +20,7 @@ module.exports = class RemoveStreamerCommand extends Command {
         .addStringOption((option) =>
           option
             .setName("name")
-            .setDescription("The name of the streamer to remove")
+            .setDescription("Navnet på streameren du vil fjerne")
             .setRequired(true)
         )
     );
@@ -31,7 +31,7 @@ module.exports = class RemoveStreamerCommand extends Command {
 
     if (!interaction.member.permissions.has("MANAGE_CHANNELS")) {
       const embed = createEmbed({
-        description: "❌ You don't have permission to use this command.",
+        description: "❌ Du har ikke tilladelse til at bruge denne kommando.",
       });
       return interaction.followUp({ embeds: [embed] });
     }
@@ -46,7 +46,7 @@ module.exports = class RemoveStreamerCommand extends Command {
 
     if (streamerIndex === -1) {
       const embed = createEmbed({
-        description: `❌ Streamer ${name} was not found in the tracking list.`,
+        description: `❌ Streamer ${name} blev ikke fundet i trackinglisten.`,
       });
       return interaction.followUp({ embeds: [embed] });
     }
@@ -55,7 +55,7 @@ module.exports = class RemoveStreamerCommand extends Command {
     guildSettings.set(guildId, "streamers", streamers);
 
     const embed = createEmbed({
-      description: `✅ Successfully removed ${name} from the tracking list.`,
+      description: `✅ ${name} blev fjernet fra trackinglisten.`,
     });
     await interaction.followUp({ embeds: [embed] });
   }

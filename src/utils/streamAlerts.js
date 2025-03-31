@@ -93,13 +93,13 @@ function createStreamerEmbed(streamer) {
 
   const currentPlatform = platformDetails[streamer.platform.toLowerCase()] || { color: 'DEFAULT', emoji: '��', icon: null };
 
-  let description = `**${streamer.username || streamer.name}** is now live on ${currentPlatform.emoji} **${streamer.platform}**!\n\n`;
+  let description = `**${streamer.username || streamer.name}** er nu live på ${currentPlatform.emoji} **${streamer.platform}**!\n\n`;
   
   if (streamer.bio) {
     description += `> ${streamer.bio}\n\n`;
   }
 
-  description += `[Click here to watch the stream](${streamer.url})`;
+  description += `[Klik her for at se streamen](${streamer.url})`;
 
   const fields = [];
   
@@ -109,22 +109,6 @@ function createStreamerEmbed(streamer) {
       value: streamer.viewers.toLocaleString(),
       inline: true,
     });
-  }
-
-  if (streamer.startedAt) {
-    let startedAtDate = new Date(streamer.startedAt);
-    if (!startedAtDate.getTime()) {
-      startedAtDate = new Date(streamer.startedAt + 'Z');
-    }
-    
-    if (!isNaN(startedAtDate.getTime())) {
-      const discordTimestamp = Math.floor(startedAtDate.getTime() / 1000);
-      fields.push({
-        name: "⏰ Stream Duration",
-        value: `<t:${discordTimestamp}:R>`,
-        inline: true,
-      });
-    }
   }
 
   const followerLabel = streamer.platform.toLowerCase() === "youtube" ? "👥 Subscribers" : "👥 Followers";

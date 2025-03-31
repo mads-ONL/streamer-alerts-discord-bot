@@ -48,9 +48,9 @@ module.exports = class AddStreamerCommand extends Command {
   async chatInputRun(interaction) {
     await interaction.deferReply({ ephemeral: true });
 
-    if (!interaction.member.permissions.has("ADMINISTRATOR")) {
+    if (!interaction.member.permissions.has("MANAGE_CHANNELS")) {
       const embed = createEmbed({
-        description: "❌ You don't have permission to use this command.",
+        description: "❌ You need the 'Manage Channels' permission to use this command.",
       });
       return interaction.followUp({ embeds: [embed] });
     }
