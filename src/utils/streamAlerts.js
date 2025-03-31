@@ -84,30 +84,33 @@ async function checkIfLive(streamer) {
 
 function createStreamerEmbed(streamer) {
   const platformDetails = {
-    twitch: { color: '#9146FF', emoji: '🟪' },
-    youtube: { color: '#FF0000', emoji: '🟥' },
-    rumble: { color: '#90EE90', emoji: '🟩' },
-    kick: { color: '#00FF00', emoji: '🟩' },
-    tiktok: { color: '#000000', emoji: '🔳' },
+    twitch: { color: '#9146FF', emoji: '🟪', icon: 'https://i.imgur.com/1Qvz0qB.png' },
+    youtube: { color: '#FF0000', emoji: '🟥', icon: 'https://i.imgur.com/8ScLNnk.png' },
+    rumble: { color: '#90EE90', emoji: '🟩', icon: 'https://i.imgur.com/8ScLNnk.png' },
+    kick: { color: '#00FF00', emoji: '🟩', icon: 'https://i.imgur.com/8ScLNnk.png' },
+    tiktok: { color: '#000000', emoji: '🔳', icon: 'https://i.imgur.com/8ScLNnk.png' },
   };
 
-  const currentPlatform = platformDetails[streamer.platform.toLowerCase()] || { color: 'DEFAULT', emoji: '🔴' };
+  const currentPlatform = platformDetails[streamer.platform.toLowerCase()] || { color: 'DEFAULT', emoji: '��', icon: null };
 
-  let description = `${streamer.username || streamer.name} is live now on [${
-    streamer.platform
-  }](${streamer.url}).`;
+  let description = `**${streamer.username || streamer.name}** is now live on ${currentPlatform.emoji} **${streamer.platform}**!\n\n`;
+  
   if (streamer.bio) {
-    description += "\n\n" + streamer.bio;
+    description += `> ${streamer.bio}\n\n`;
   }
 
+  description += `[Click here to watch the stream](${streamer.url})`;
+
   const fields = [];
+  
   if (streamer.viewers) {
     fields.push({
-      name: "👀 Viewers",
-      value: streamer.viewers.toString(),
+      name: "👥 Current Viewers",
+      value: streamer.viewers.toLocaleString(),
       inline: true,
     });
   }
+
   if (streamer.startedAt) {
     let startedAtDate = new Date(streamer.startedAt);
     if (!startedAtDate.getTime()) {
@@ -117,29 +120,32 @@ function createStreamerEmbed(streamer) {
     if (!isNaN(startedAtDate.getTime())) {
       const discordTimestamp = Math.floor(startedAtDate.getTime() / 1000);
       fields.push({
-        name: "⏰ Started At",
+        name: "⏰ Stream Duration",
         value: `<t:${discordTimestamp}:R>`,
         inline: true,
       });
     }
   }
-  const followerLabel =
-    streamer.platform.toLowerCase() === "youtube"
-      ? "👥 Subscribers"
-      : "👥 Followers";
+
+  const followerLabel = streamer.platform.toLowerCase() === "youtube" ? "👥 Subscribers" : "👥 Followers";
   if (streamer.followersCount) {
     fields.push({
       name: followerLabel,
-      value: streamer.followersCount.toString(),
+      value: streamer.followersCount.toLocaleString(),
       inline: true,
     });
   }
+
   if (streamer.verified) {
-    fields.push({ name: "✅ Verified", value: "Yes", inline: true });
+    fields.push({
+      name: "✅ Status",
+      value: "Verified Creator",
+      inline: true,
+    });
   }
 
   const button = new MessageButton()
-    .setLabel(`${streamer.name} live now on ${streamer.platform}!`)
+    .setLabel(`Watch on ${streamer.platform}`)
     .setStyle('LINK')
     .setURL(streamer.url)
     .setEmoji(currentPlatform.emoji);
@@ -152,8 +158,15 @@ function createStreamerEmbed(streamer) {
       url: streamer.url,
       description: description,
       color: currentPlatform.color,
+      thumbnail: streamer.profileImageUrl || undefined,
       image: streamer.imageUrl || undefined,
       fields: fields,
+      author: {
+        name: `${streamer.username || streamer.name} on ${streamer.platform}`,
+        iconURL: currentPlatform.icon,
+        url: streamer.url
+      },
+      timestamp: true
     }),
     components: [row]
   };
