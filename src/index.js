@@ -7,70 +7,25 @@ const streamAlerts = require("./utils/streamAlerts");
 
 const activities = [
   {
-    text: "på {streamerCount} streams | {serverCount} servere",
+    text: "on {streamerCount} streams | {serverCount} servers",
     type: "PLAYING",
   },
   {
-    text: "over {streamerCount} live streams | {serverCount} servere",
+    text: "over {streamerCount} live streams | {serverCount} servers",
     type: "WATCHING",
   },
   {
-    text: "til {streamerCount} streamere | {serverCount} servere",
+    text: "to {streamerCount} streamers | {serverCount} servers",
     type: "LISTENING",
   },
 ];
 
 const client = new SapphireClient({
   intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_MESSAGES"],
-  loadMessageCommandListeners: true,
-  loadDefaultErrorListeners: true,
-  api: {
-    auth: true,
-    version: '10'
-  }
 });
 
-client.once("ready", async () => {
+client.once("ready", () => {
   console.log("Bot is online!");
-  
-  // Register commands
-  try {
-    console.log("Started refreshing application (/) commands.");
-    await client.application?.fetch();
-    
-    // Register commands globally
-    const commands = await client.application.commands.fetch();
-    console.log(`Found ${commands.size} existing commands.`);
-    
-    // Register commands using Sapphire's registry
-    const commandStore = client.stores.get('commands');
-    const commandsToRegister = [];
-    
-    for (const command of commandStore.values()) {
-      const commandData = {
-        name: command.name,
-        description: command.description
-      };
-      
-      if (command.options && Array.isArray(command.options)) {
-        commandData.options = command.options.map(option => ({
-          name: option.name,
-          description: option.description,
-          type: option.type,
-          required: option.required,
-          choices: option.choices
-        }));
-      }
-      
-      commandsToRegister.push(commandData);
-    }
-    
-    await client.application.commands.set(commandsToRegister);
-    console.log("Successfully reloaded application (/) commands.");
-  } catch (error) {
-    console.error("Error refreshing application (/) commands:", error);
-  }
-
   streamAlerts.init(client);
 
   let activityIndex = 0;
