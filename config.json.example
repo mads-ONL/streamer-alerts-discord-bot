@@ -1,10 +1,10 @@
 {
-  "token": "xxxxxxxxxxxxxxxxxxxxxx",                                    // bot token
-  "color": "#61CB2B",                                                   // embed color
-  "footerText": "Developed By: BankkRoll",                              // embed footer text
-  "footerIcon": "https://i.ibb.co/Bqs3jh7/6302741.png",                 // embed footer icon
+  "token": "xxxxxxxxxxxxxxxxxxxxxx",
+  "color": "#61CB2B",
+  "footerText": "Developed By: BankkRoll",
+  "footerIcon": "https://i.ibb.co/Bqs3jh7/6302741.png",
   "twitch": {
-    "clientId": "your_twitch_client_id",                               // Twitch Client ID
-    "clientSecret": "your_twitch_client_secret"                         // Twitch Client Secret
+    "clientId": "your_twitch_client_id",
+    "clientSecret": "your_twitch_client_secret"
   }
 }
