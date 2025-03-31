@@ -42,16 +42,19 @@ client.once("ready", async () => {
     const commands = await client.application.commands.fetch();
     console.log(`Found ${commands.size} existing commands.`);
     
-    // Get all commands from Sapphire's store
-    const commandStore = client.stores.get('commands');
-    const commandsToRegister = commandStore.map(command => ({
+    // Register commands using Sapphire's registry
+    await client.application.commands.set(client.stores.get('commands').map(command => ({
       name: command.name,
       description: command.description,
-      options: command.options || []
-    }));
+      options: command.options?.map(option => ({
+        name: option.name,
+        description: option.description,
+        type: option.type,
+        required: option.required,
+        choices: option.choices
+      })) || []
+    })));
     
-    // Register the commands
-    await client.application.commands.set(commandsToRegister);
     console.log("Successfully reloaded application (/) commands.");
   } catch (error) {
     console.error("Error refreshing application (/) commands:", error);
