@@ -36,7 +36,7 @@ async function checkStreamers(client) {
             const channel = client.channels.cache.get(streamers[i].channelID);
             if (channel) {
               const { embed, components } = createStreamerEmbed(liveInfo.streamer);
-              await channel.send({ embeds: [embed], components });
+              await channel.send({ content: "@here", embeds: [embed], components });
             }
 
           lastLiveData.set(liveStreamKey, {
