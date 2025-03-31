@@ -30,6 +30,14 @@ client.once("ready", async () => {
   // Register commands
   try {
     console.log("Started refreshing application (/) commands.");
+    // Wait for the application to be ready
+    await client.application?.fetch();
+    
+    // Register commands globally
+    const commands = await client.application.commands.fetch();
+    console.log(`Found ${commands.size} existing commands.`);
+    
+    // Set the commands
     await client.application.commands.set();
     console.log("Successfully reloaded application (/) commands.");
   } catch (error) {
