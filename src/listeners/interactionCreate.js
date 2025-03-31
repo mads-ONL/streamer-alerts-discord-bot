@@ -17,8 +17,8 @@ module.exports = class extends Listener {
     } catch (error) {
       console.error("An error occurred:", error);
       const errorEmbed = createEmbed(
-        "An error occurred",
-        "Please try again later.",
+        "En fejl opstod",
+        "Prøv igen senere.",
         config.footer
       );
       interaction.reply({ embeds: [errorEmbed], ephemeral: true });

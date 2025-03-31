@@ -7,15 +7,15 @@ const streamAlerts = require("./utils/streamAlerts");
 
 const activities = [
   {
-    text: "on {streamerCount} streams | {serverCount} servers",
+    text: "på {streamerCount} streams | {serverCount} servere",
     type: "PLAYING",
   },
   {
-    text: "over {streamerCount} live streams | {serverCount} servers",
+    text: "over {streamerCount} live streams | {serverCount} servere",
     type: "WATCHING",
   },
   {
-    text: "to {streamerCount} streamers | {serverCount} servers",
+    text: "til {streamerCount} streamere | {serverCount} servere",
     type: "LISTENING",
   },
 ];
@@ -24,8 +24,18 @@ const client = new SapphireClient({
   intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_MESSAGES"],
 });
 
-client.once("ready", () => {
+client.once("ready", async () => {
   console.log("Bot is online!");
+  
+  // Register commands
+  try {
+    console.log("Started refreshing application (/) commands.");
+    await client.application.commands.set();
+    console.log("Successfully reloaded application (/) commands.");
+  } catch (error) {
+    console.error("Error refreshing application (/) commands:", error);
+  }
+
   streamAlerts.init(client);
 
   let activityIndex = 0;
