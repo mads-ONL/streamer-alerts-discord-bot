@@ -42,8 +42,16 @@ client.once("ready", async () => {
     const commands = await client.application.commands.fetch();
     console.log(`Found ${commands.size} existing commands.`);
     
-    // Register commands using Sapphire's registry
-    await client.application.commands.set(client.stores.get('commands').map(command => command.toJSON()));
+    // Get all commands from Sapphire's store
+    const commandStore = client.stores.get('commands');
+    const commandsToRegister = commandStore.map(command => ({
+      name: command.name,
+      description: command.description,
+      options: command.options || []
+    }));
+    
+    // Register the commands
+    await client.application.commands.set(commandsToRegister);
     console.log("Successfully reloaded application (/) commands.");
   } catch (error) {
     console.error("Error refreshing application (/) commands:", error);
